@@ -6,7 +6,6 @@ import org.raven.inputs.KeyListener;
 import org.raven.inputs.MouseListener;
 import org.raven.scenes.LevelEditorScene;
 import org.raven.scenes.Scene;
-import org.raven.util.Time;
 
 import java.util.logging.Logger;
 
@@ -109,7 +108,7 @@ public class Window {
     private void loop() {
 
         // Setup time variables
-        float frameStartTime = Time.getTime();
+        float frameStartTime = (float) glfwGetTime();
         float frameEndTime;
         float dt = -1.0f;
 
@@ -128,7 +127,7 @@ public class Window {
             glfwSwapBuffers(glfwWindow);
 
             // Calculate Time Delta of Frame
-            frameEndTime = Time.getTime();
+            frameEndTime = (float) glfwGetTime();
             dt = frameEndTime - frameStartTime;
             frameStartTime = frameEndTime;
         }

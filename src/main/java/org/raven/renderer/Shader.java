@@ -164,6 +164,12 @@ public class Shader {
         glUniform1i(varLocation, slot);
     }
 
+    public void uploadIntArray(String varName, int[] array) {
+        int varLocation = glGetUniformLocation(shaderProgramID, varName);
+        use();
+        glUniform1iv(varLocation, array);
+    }
+
     private String retrievePattern(String source, int index) {
         int eol = source.indexOf("\r\n", index);
         return source.substring(index, eol).trim();
