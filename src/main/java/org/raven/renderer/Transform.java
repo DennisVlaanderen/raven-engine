@@ -1,4 +1,4 @@
-package org.raven.objects;
+package org.raven.renderer;
 
 import org.joml.Vector2f;
 

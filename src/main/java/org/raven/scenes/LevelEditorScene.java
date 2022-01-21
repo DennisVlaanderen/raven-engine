@@ -4,8 +4,10 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.raven.Camera;
 import org.raven.objects.GameObject;
-import org.raven.objects.Transform;
+import org.raven.renderer.Transform;
 import org.raven.objects.components.SpriteRenderer;
+import org.raven.util.Asset;
+import org.raven.util.AssetPool;
 
 public class LevelEditorScene extends Scene {
 
@@ -15,7 +17,7 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void init() {
-        this.camera = new Camera(new Vector2f());
+        this.camera = new Camera(new Vector2f(-20, -30));
 
         int xOffset = 10;
         int yOffset = 10;
@@ -31,10 +33,16 @@ public class LevelEditorScene extends Scene {
                 float yPos = yOffset + (j * sizeY);
 
                 GameObject go = new GameObject("Obj" + i + j, new Transform(new Vector2f(xPos, yPos), new Vector2f(sizeX, sizeY)));
-                go.addComponent(new SpriteRenderer(new Vector4f(xPos/totalWidth, yPos/totalHeight, 1, 1)));
+                go.addComponent(new SpriteRenderer(new Vector4f(xPos/totalWidth, yPos/totalHeight, 0.1f, 1)));
                 this.addGameObjectToScene(go);
             }
         }
+
+        loadResources();
+    }
+
+    private void loadResources() {
+        AssetPool.getShader(Asset.SHADER_DEFAULT);
     }
 
     @Override

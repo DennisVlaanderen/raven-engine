@@ -4,6 +4,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.raven.Window;
 import org.raven.objects.components.SpriteRenderer;
+import org.raven.util.Asset;
+import org.raven.util.AssetPool;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -35,7 +37,7 @@ public class RenderBatch {
     private Shader shader;
 
     public RenderBatch(int maxBatchSize) {
-        shader = new Shader("assets/shaders/default.glsl");
+        shader = AssetPool.getShader(Asset.SHADER_DEFAULT);
         shader.compileAndLink();
         this.sprites = new SpriteRenderer[maxBatchSize];
         this.maxBatchSize = maxBatchSize;
