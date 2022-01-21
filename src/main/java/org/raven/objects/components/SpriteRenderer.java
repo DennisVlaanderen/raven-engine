@@ -1,10 +1,15 @@
 package org.raven.objects.components;
 
+import org.joml.Vector4f;
 import org.raven.objects.Component;
 
 public class SpriteRenderer extends Component {
 
-    private boolean firstTime = false;
+    private Vector4f color;
+
+    public SpriteRenderer(Vector4f color) {
+        this.color = color;
+    }
 
     @Override
     public void start() {
@@ -12,8 +17,10 @@ public class SpriteRenderer extends Component {
 
     @Override
     public void update(float dt) {
-        if (!firstTime) {
-            firstTime = true;
-        }
+
+    }
+
+    public Vector4f getColor() {
+        return color;
     }
 }

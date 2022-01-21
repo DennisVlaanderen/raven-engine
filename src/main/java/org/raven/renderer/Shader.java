@@ -1,4 +1,4 @@
-package org.raven.renderables;
+package org.raven.renderer;
 
 import org.joml.*;
 import org.lwjgl.BufferUtils;

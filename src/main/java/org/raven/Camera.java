@@ -1,4 +1,4 @@
-package org.raven.renderables;
+package org.raven;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;

@@ -1,4 +1,4 @@
-package org.raven.renderables;
+package org.raven;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -6,7 +6,6 @@ import org.raven.inputs.KeyListener;
 import org.raven.inputs.MouseListener;
 import org.raven.scenes.LevelEditorScene;
 import org.raven.scenes.Scene;
-import org.raven.scenes.SceneManager;
 import org.raven.util.Time;
 
 import java.util.logging.Logger;
@@ -133,5 +132,9 @@ public class Window {
             dt = frameEndTime - frameStartTime;
             frameStartTime = frameEndTime;
         }
+    }
+
+    public SceneManager getSceneManager() {
+        return sceneManager;
     }
 }

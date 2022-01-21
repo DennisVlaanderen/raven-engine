@@ -1,4 +1,6 @@
-package org.raven.scenes;
+package org.raven;
+
+import org.raven.scenes.Scene;
 
 import java.util.ArrayList;
 import java.util.List;
