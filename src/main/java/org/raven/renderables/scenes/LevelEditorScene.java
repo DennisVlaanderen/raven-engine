@@ -4,6 +4,7 @@ import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 import org.raven.renderables.Camera;
 import org.raven.renderables.Shader;
+import org.raven.renderables.Texture;
 import org.raven.util.Time;
 
 import java.nio.FloatBuffer;
@@ -18,12 +19,14 @@ public class LevelEditorScene implements Scene {
     private Shader shader;
     private Camera camera;
 
+    private Texture testTexture;
+
     private float[] vertexArray = {
-            // pos                   //col
-             100.5f, 0.5f,    0.0f,  1.0f, 0.0f, 0.0f, 1.0f, // Bottom Right
-             0.5f,   100.5f,  0.0f,  0.0f, 1.0f, 0.0f, 1.0f, // Top Left
-             100.5f, 100.5f,  0.0f,  0.0f, 0.0f, 1.0f, 1.0f, // Top Right
-             0.5f,   0.5f,    0.0f,  1.0f, 1.0f, 0.0f, 1.0f, // Bottom Left
+            // pos                   //col                      // UV Coordinates
+             100.5f, 0.5f,    0.0f,  1.0f, 0.0f, 0.0f, 1.0f,    1, 0,// Bottom Right
+             0.5f,   100.5f,  0.0f,  0.0f, 1.0f, 0.0f, 1.0f,    0, 1, // Top Left
+             100.5f, 100.5f,  0.0f,  0.0f, 0.0f, 1.0f, 1.0f,    1, 1, // Top Right
+             0.5f,   0.5f,    0.0f,  1.0f, 1.0f, 0.0f, 1.0f,    0, 0, // Bottom Left
     }; // Vertex for a single square
 
     // Important: Must be in CCW order
@@ -37,42 +40,16 @@ public class LevelEditorScene implements Scene {
     private int eboID;
 
     public LevelEditorScene() {
-        this.shader = new Shader("assets/shaders/default.glsl");
-    }
-
-    @Override
-    public void update(float dt) {
-        // Setup Shaders
-        shader.use();
-
-        shader.uploadMat4f("uProj", camera.getProjectionMatrix());
-        shader.uploadMat4f("uView", camera.getViewMatrix());
-        shader.uploadFloat("uTime", Time.getTime());
-
-        // Bind the VAO
-        glBindVertexArray(vaoID);
-
-        // Enable attribute pointers
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-
-        glDrawElements(GL_TRIANGLES, elementArray.length, GL_UNSIGNED_INT, 0);
-
-        // Unbind everything
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-
-        glBindVertexArray(0);
-
-        shader.detach();
     }
 
     @Override
     public void init() {
-        this.camera = new Camera(new Vector2f());
+        this.camera = new Camera(new Vector2f(-200, -300));
+        this.shader = new Shader("assets/shaders/default.glsl");
 
+        this.shader.compileAndLink();
 
-        shader.compileAndLink();
+        this.testTexture = new Texture("assets/images/testImage.png");
 
         // Generate VAO, VBO and EBO for rendering
         vaoID = glGenVertexArrays();
@@ -97,14 +74,52 @@ public class LevelEditorScene implements Scene {
         // Add vertex attribute pointers
         int positionsSize = 3;
         int colorSize = 4;
-        int floatSizeBytes = 4;
-        int vertexSizeInBytes = (positionsSize + colorSize) * floatSizeBytes;
+        int uvSize = 2;
+        int vertexSizeInBytes = (positionsSize + colorSize + uvSize) * Float.BYTES;
 
         glVertexAttribPointer(0, positionsSize, GL_FLOAT, false, vertexSizeInBytes, 0);
         glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, colorSize, GL_FLOAT, false, vertexSizeInBytes, (long) positionsSize * floatSizeBytes);
+        glVertexAttribPointer(1, colorSize, GL_FLOAT, false, vertexSizeInBytes, (long) positionsSize * Float.BYTES);
         glEnableVertexAttribArray(1);
 
+        glVertexAttribPointer(2, uvSize, GL_FLOAT, false, vertexSizeInBytes, (long) (positionsSize + colorSize) * Float.BYTES);
+        glEnableVertexAttribArray(2);
+    }
+
+    @Override
+    public void update(float dt) {
+        // Setup Shaders
+        shader.use();
+
+        //upload texture
+        shader.uploadTexture("TEX_SAMPLER", 0);
+        glActiveTexture(GL_TEXTURE0);
+        testTexture.bind();
+
+        shader.uploadMat4f("uProj", camera.getProjectionMatrix());
+        shader.uploadMat4f("uView", camera.getViewMatrix());
+        shader.uploadFloat("uTime", Time.getTime());
+
+        // Bind the VAO
+        glBindVertexArray(vaoID);
+
+        // Enable attribute pointers
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        glDrawElements(GL_TRIANGLES, elementArray.length, GL_UNSIGNED_INT, 0);
+
+        // Unbind everything
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+
+        glBindVertexArray(0);
+
+        // Enable texture blending
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        shader.detach();
     }
 }
