@@ -1,7 +1,10 @@
-package org.raven.renderables.scenes;
+package org.raven.scenes;
 
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
+import org.raven.objects.GameObject;
+import org.raven.objects.components.FontRenderer;
+import org.raven.objects.components.SpriteRenderer;
 import org.raven.renderables.Camera;
 import org.raven.renderables.Shader;
 import org.raven.renderables.Texture;
@@ -14,12 +17,14 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-public class LevelEditorScene implements Scene {
+public class LevelEditorScene extends Scene {
 
     private Shader shader;
     private Camera camera;
 
     private Texture testTexture;
+
+    private GameObject testGameObject;
 
     private float[] vertexArray = {
             // pos                   //col                      // UV Coordinates
@@ -39,11 +44,19 @@ public class LevelEditorScene implements Scene {
     private int vboID;
     private int eboID;
 
+    private boolean firstTime = false;
+
     public LevelEditorScene() {
+        // Empty constructor
     }
 
     @Override
     public void init() {
+        this.testGameObject = new GameObject("testObj");
+        this.testGameObject.addComponent(new SpriteRenderer());
+        this.testGameObject.addComponent(new FontRenderer());
+        this.addGameObjectToScene(this.testGameObject);
+
         this.camera = new Camera(new Vector2f(-200, -300));
         this.shader = new Shader("assets/shaders/default.glsl");
 
@@ -121,5 +134,16 @@ public class LevelEditorScene implements Scene {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         shader.detach();
+
+        if (!firstTime) {
+            GameObject testgo = new GameObject("New object");
+            testgo.addComponent(new SpriteRenderer());
+            this.addGameObjectToScene(testgo);
+            firstTime = true;
+        }
+
+        for (GameObject go : this.gameObjects) {
+            go.update(dt);
+        }
     }
 }

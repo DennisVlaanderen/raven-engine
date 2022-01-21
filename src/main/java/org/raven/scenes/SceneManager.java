@@ -1,4 +1,4 @@
-package org.raven.renderables.scenes;
+package org.raven.scenes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,7 @@ public class SceneManager {
     public void setCurrentScene(Scene scene) {
         this.currentScene = scene;
         scene.init();
+        scene.start();
     }
 
     public Scene getCurrentScene() {

@@ -1,6 +1,6 @@
-package org.raven.renderables.scenes;
+package org.raven.scenes;
 
-public class LevelScene implements Scene {
+public class LevelScene extends Scene {
 
     public LevelScene() {
     }

@@ -4,10 +4,9 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.raven.inputs.KeyListener;
 import org.raven.inputs.MouseListener;
-import org.raven.renderables.scenes.LevelEditorScene;
-import org.raven.renderables.scenes.LevelScene;
-import org.raven.renderables.scenes.Scene;
-import org.raven.renderables.scenes.SceneManager;
+import org.raven.scenes.LevelEditorScene;
+import org.raven.scenes.Scene;
+import org.raven.scenes.SceneManager;
 import org.raven.util.Time;
 
 import java.util.logging.Logger;
