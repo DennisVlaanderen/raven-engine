@@ -125,6 +125,7 @@ public class RenderBatch {
         glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
 
         // Use shader
+        // TODO GRASP the shader loading for projection and view matrices to the camera class
         Matrix4f projectionMatrix = Window.get().getSceneManager().getCurrentScene().getCamera().getProjectionMatrix();
         Matrix4f viewMatrix = Window.get().getSceneManager().getCurrentScene().getCamera().getViewMatrix();
 
