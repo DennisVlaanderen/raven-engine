@@ -8,7 +8,7 @@ public abstract class Component {
         // Empty boilerplate in case start method is not needed for specific component.
     }
 
-    public abstract void update(float dt);
+    public  void update(float dt){}
 
     public GameObject getGameObject() {
         return gameObject;
@@ -17,4 +17,6 @@ public abstract class Component {
     public void setGameObject(GameObject gameObject) {
         this.gameObject = gameObject;
     }
+
+    public void imgui() {}
 }

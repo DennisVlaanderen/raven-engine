@@ -1,5 +1,6 @@
 package org.raven.objects.components;
 
+import imgui.ImGui;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.raven.objects.Component;
@@ -37,6 +38,15 @@ public class SpriteRenderer extends Component {
         if (!this.lastTransform.equals(this.getGameObject().getTransform())) {
             this.getGameObject().getTransform().copy(this.lastTransform);
             dirty = true;
+        }
+    }
+
+    @Override
+    public void imgui() {
+        float[] imColors = {color.x, color.y, color.z, color.w};
+        if (ImGui.colorPicker4("Color Picker: ", imColors)) {
+           this.color.set(imColors[0], imColors[1], imColors[2], imColors[3]);
+           this.dirty = true;
         }
     }
 

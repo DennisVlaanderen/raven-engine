@@ -1,6 +1,8 @@
 package org.raven.scenes;
 
+import imgui.ImGui;
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 import org.raven.Camera;
 import org.raven.objects.GameObject;
 import org.raven.objects.components.Spritesheet;
@@ -27,12 +29,14 @@ public class LevelEditorScene extends Scene {
         Spritesheet sprites = AssetPool.getSpritesheet("assets/images/spritesheet.png");
 
         obj1 = new GameObject("obj1", new Transform(new Vector2f(100,100), new Vector2f(42, 42)), -1);
-        obj1.addComponent(new SpriteRenderer(sprites.getSprite(36)));
+        obj1.addComponent(new SpriteRenderer(new Vector4f(1.0f, 0.3f, 0.6f, 1.0f)));
         this.addGameObjectToScene(obj1);
 
         GameObject obj2 = new GameObject("obj2", new Transform(new Vector2f(200,100), new Vector2f(42, 42)), 2);
         obj2.addComponent(new SpriteRenderer(sprites.getSprite(15)));
         this.addGameObjectToScene(obj2);
+
+        this.activeGameObject = obj1;
 
     }
 
@@ -45,14 +49,17 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void update(float dt) {
-        Vector2f position = obj1.getTransform().getPosition();
-        float x = position.x += (10 * dt);
-        obj1.getTransform().getPosition().set(x, position.y);
-
         for (GameObject go : this.gameObjects) {
             go.update(dt);
         }
 
         this.renderer.render();
+    }
+
+    @Override
+    public void imgui() {
+        ImGui.begin("Test Window");
+        ImGui.text("test");
+        ImGui.end();
     }
 }

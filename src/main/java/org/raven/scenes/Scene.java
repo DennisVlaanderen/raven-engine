@@ -1,5 +1,6 @@
 package org.raven.scenes;
 
+import imgui.ImGui;
 import org.raven.Camera;
 import org.raven.objects.GameObject;
 import org.raven.renderer.Renderer;
@@ -14,6 +15,8 @@ public abstract class Scene {
 
     protected List<GameObject> gameObjects = new ArrayList<>();
     protected Camera camera;
+
+    protected GameObject activeGameObject = null;
 
     protected Scene() {
 
@@ -47,4 +50,17 @@ public abstract class Scene {
         return camera;
     }
 
+    public void sceneImgui() {
+        if (activeGameObject != null) {
+            ImGui.begin("Inspector");
+            activeGameObject.imgui();
+            ImGui.end();
+        }
+
+        imgui();
+    }
+
+    public void imgui() {
+
+    }
 }

@@ -9,7 +9,9 @@ import org.raven.util.Asset;
 import org.raven.util.AssetPool;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -258,5 +260,22 @@ public class RenderBatch implements Comparable<RenderBatch>{
     @Override
     public int compareTo(RenderBatch o) {
         return Integer.compare(this.zIndex, o.zIndex);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RenderBatch that = (RenderBatch) o;
+        return numSprites == that.numSprites && hasRoom == that.hasRoom && vaoID == that.vaoID && vboID == that.vboID && maxBatchSize == that.maxBatchSize && zIndex == that.zIndex && Arrays.equals(sprites, that.sprites) && Arrays.equals(vertices, that.vertices) && Objects.equals(textures, that.textures) && Arrays.equals(texSlots, that.texSlots) && Objects.equals(shader, that.shader);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(numSprites, hasRoom, textures, vaoID, vboID, maxBatchSize, shader, zIndex);
+        result = 31 * result + Arrays.hashCode(sprites);
+        result = 31 * result + Arrays.hashCode(vertices);
+        result = 31 * result + Arrays.hashCode(texSlots);
+        return result;
     }
 }

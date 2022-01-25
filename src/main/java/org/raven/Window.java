@@ -2,6 +2,7 @@ package org.raven;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import org.raven.imgui.ImGuiLayer;
 import org.raven.inputs.KeyListener;
 import org.raven.inputs.MouseListener;
 import org.raven.scenes.LevelEditorScene;
@@ -16,22 +17,20 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
 
-    private int width;
-    private int height;
-    private String title;
+    private static int width = 1920;
+    private static int height = 1080;
+    private final String title;
 
     private long glfwWindow;
 
     private final SceneManager sceneManager;
+    private ImGuiLayer imGuiLayer;
 
     private static final Logger LOGGER = Logger.getLogger(Window.class.getName());
 
     private static Window window = null;
 
-
     private Window() {
-        this.width = 1280;
-        this.height = 720;
         this.title = "Raven Engine";
         this.sceneManager = new SceneManager();
     }
@@ -73,7 +72,7 @@ public class Window {
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
         // Create Window
-        glfwWindow = glfwCreateWindow(this.width, this.height, this.title, NULL, NULL);
+        glfwWindow = glfwCreateWindow(Window.width, Window.height, this.title, NULL, NULL);
         if (glfwWindow == NULL) {
             throw new IllegalStateException("Failed to create the GLFW Window.");
         }
@@ -85,6 +84,12 @@ public class Window {
 
         // Set Keyboard Callback
         glfwSetKeyCallback(glfwWindow, KeyListener::keyCallback);
+
+        // Set Resize Callback
+        glfwSetWindowSizeCallback(glfwWindow, (w, newWidth, newHeight) -> {
+            Window.setWidth(newWidth);
+            Window.setHeight(newHeight);
+        });
 
         // Make the OpenGL Context current
         glfwMakeContextCurrent(glfwWindow);
@@ -100,6 +105,9 @@ public class Window {
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+        this.imGuiLayer = new ImGuiLayer(glfwWindow);
+        this.imGuiLayer.initImGui();
 
         // Register scenes
         Scene scene = new LevelEditorScene();
@@ -126,6 +134,8 @@ public class Window {
                 sceneManager.getCurrentScene().update(dt);
             }
 
+            this.imGuiLayer.update(dt, sceneManager.getCurrentScene());
+
             // Swap Memory Buffers
             glfwSwapBuffers(glfwWindow);
 
@@ -138,5 +148,21 @@ public class Window {
 
     public SceneManager getSceneManager() {
         return sceneManager;
+    }
+
+    public static int getWidth() {
+        return width;
+    }
+
+    public static int getHeight() {
+        return height;
+    }
+
+    public static void setWidth(int width) {
+        Window.width = width;
+    }
+
+    public static void setHeight(int height) {
+        Window.height = height;
     }
 }
