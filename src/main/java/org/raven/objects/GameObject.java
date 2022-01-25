@@ -12,22 +12,24 @@ public class GameObject {
     private String name;
     private List<Component> components;
     private Transform transform;
+    private int zIndex;
 
     private Logger logger;
 
     public GameObject(String name) {
-        init(name, new ArrayList<>(), new Transform());
+        init(name, new ArrayList<>(), new Transform(), 0);
     }
 
-    public GameObject(String name, Transform transform) {
-        init(name, new ArrayList<>(), transform);
+    public GameObject(String name, Transform transform, int zIndex) {
+        init(name, new ArrayList<>(), transform, zIndex);
     }
 
-    public void init(String name, List<Component> components, Transform transform) {
+    public void init(String name, List<Component> components, Transform transform, int zIndex) {
         this.name = name;
         this.logger = Logger.getLogger(this.getClass().getName());
         this.components = components;
         this.transform = transform;
+        this.zIndex = zIndex;
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {
@@ -74,5 +76,9 @@ public class GameObject {
 
     public Transform getTransform() {
         return transform;
+    }
+
+    public int getzIndex() {
+        return zIndex;
     }
 }

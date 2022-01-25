@@ -98,6 +98,9 @@ public class Window {
         // Enabled OpenGL bindings
         GL.createCapabilities();
 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
         // Register scenes
         Scene scene = new LevelEditorScene();
         sceneManager.addScene(scene);
