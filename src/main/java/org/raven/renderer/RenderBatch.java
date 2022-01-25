@@ -10,7 +10,6 @@ import org.raven.util.AssetPool;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -18,10 +17,12 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class RenderBatch {
-    // Vertex
-    // ======
-    // Pos              // Color                        // Tex Coords   // TexID
-    // float, float,    float, float, float, float,     float, float,   float
+    /*
+     | Vertex Layout                                                                 |
+     | ============================================================================= |
+     | // Pos           // Color                        // Tex Coords       // TexID |
+     | float, float,    float, float, float, float,     float, float,       float    |
+    */
     private static final int POS_SIZE = 2;
     private static final int COLOR_SIZE = 4;
     private static final int TEX_COORDS_SIZE = 2;
@@ -120,9 +121,22 @@ public class RenderBatch {
     }
 
     public void render() {
-        // For now, we will buffer all data every frame.
-        glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
+
+        boolean rebufferData = false;
+        for (int i = 0; i < numSprites; i++) {
+            SpriteRenderer spr = sprites[i];
+            if (spr.isDirty()) {
+                loadVertexProperties(i);
+                spr.clean();
+                rebufferData = true;
+            }
+        }
+
+        // Rebuffer data when sprites are dirty
+        if (rebufferData) {
+            glBindBuffer(GL_ARRAY_BUFFER, vboID);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
+        }
 
         // Use shader
         // TODO GRASP the shader loading for projection and view matrices to the camera class
@@ -148,9 +162,8 @@ public class RenderBatch {
         glDisableVertexAttribArray(1);
         glBindVertexArray(0);
 
-        for (int i = 0; i < textures.size(); i++) {
-            glActiveTexture(GL_TEXTURE0 + i);
-            textures.get(i).unbind();
+        for (Texture texture : textures) {
+            texture.unbind();
         }
         shader.detach();
     }
@@ -164,12 +177,7 @@ public class RenderBatch {
         Vector4f color = sprite.getColor();
         Vector2f[] textCoords = sprite.getTexCoords();
 
-        int texID = 0;
-        // Match Texture with sprite and set id to be the same.
-        if (sprite.getTexture() != null) {
-            texID = IntStream.range(0, textures.size())
-                    .anyMatch(j -> textures.get(i) == sprite.getTexture()) ? i + 1 : 0;
-        }
+        int texID = getTexID(sprite);
 
         // Add vertex with the appropriate properties
         float xAdd = 1.0f;
@@ -204,14 +212,26 @@ public class RenderBatch {
         }
     }
 
+    private int getTexID(SpriteRenderer sprite) {
+        if (sprite.getTexture() != null) {
+            for (int j = 0; j < textures.size(); j++) {
+                if (textures.get(j) == sprite.getTexture()) {
+                    return j + 1;
+                }
+            }
+        }
+        return 0;
+    }
+
     private void loadElementIndices(int[] elements, int i) {
-        int offsetArrayIndex = 6* i;
-        int offset = 4*i;
+        int offsetArrayIndex = 6 * i;
+        int offset = 4 * i;
 
         // Tri 1
         elements[offsetArrayIndex] = offset + 3;
         elements[offsetArrayIndex + 1] = offset + 2;
         elements[offsetArrayIndex + 2] = offset;
+        // Tri 2
         elements[offsetArrayIndex + 3] = offset;
         elements[offsetArrayIndex + 4] = offset + 2;
         elements[offsetArrayIndex + 5] = offset + 1;
@@ -219,5 +239,13 @@ public class RenderBatch {
 
     public boolean hasRoom() {
         return hasRoom;
+    }
+
+    public boolean hasTextureRoom() {
+        return textures.size() < 8;
+    }
+
+    public boolean hasTexture(Texture tex) {
+        return textures.contains(tex);
     }
 }

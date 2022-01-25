@@ -116,7 +116,7 @@ public class Window {
             // Poll Events
             glfwPollEvents();
 
-            glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            glClearColor(0.5f, 0.0f, 0.0f, 0.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             if (dt >= 0) {
